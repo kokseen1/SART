@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SART v2</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.gif">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery.cookie@1.4.1/jquery.cookie.min.js"></script>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+    <nav id="nav" class="autohide navbar fixed-top bg-light">
+        <div style="margin: auto;">
+            <div id="buttons" class="text-center">
+                <form action="/" method="post" class="d-inline">
+                    <input id="prev" type="hidden" name="url">
+                    <input type="submit" value="Last" class="btn btn-outline-dark btn-sm">
+                </form>
+                <button class="btn btn-info btn-sm" id="sort_faves">&#128420;</button>
+                <button class="btn btn-success btn-sm" id="sort_soonest">Soon</button>
+                <button class="btn btn-danger btn-sm" id="sort_highest_score">Best</button>
+                <button class="btn btn-warning btn-sm" id="sort_popular">Pop</button>
+                <button class="btn btn-primary btn-sm" id="sort_most_recent">Recent</button>
+                <a href="/" class="btn btn-secondary btn-sm">Current</a>
+                <form id="nextBtn" action="/" method="post" class="d-inline">
+                    <input id="next" type="hidden" name="url">
+                    <input type="submit" value="Next" class="btn btn-outline-dark btn-sm">
+                </form>
+
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div id="wrapper">
+            <img src="https://static.wikia.nocookie.net/bleachthekingoffighters/images/1/1a/Hirasawa_BKOFA15.png"
+                id="loader" class="loader" style="display: block;margin:0 auto; ">
+        </div>
+    </div>
+</body>
+<script src="js/main.js"></script>
+
+</html>
