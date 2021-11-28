@@ -21,20 +21,14 @@
     <nav id="nav" class="autohide navbar fixed-top bg-light">
         <div style="margin: auto;">
             <div id="buttons" class="text-center">
-                <form action="/" method="post" class="d-inline">
-                    <input id="prev" type="hidden" name="url">
-                    <input type="submit" value="Last" class="btn btn-outline-dark btn-sm">
-                </form>
+                <input type="submit" id="prev-btn" value="Prev" class="btn btn-outline-dark btn-sm">
                 <button class="btn btn-info btn-sm" id="sort_faves">&#128420;</button>
                 <button class="btn btn-success btn-sm" id="sort_soonest">Soon</button>
                 <button class="btn btn-danger btn-sm" id="sort_highest_score">Best</button>
                 <button class="btn btn-warning btn-sm" id="sort_popular">Pop</button>
                 <button class="btn btn-primary btn-sm" id="sort_most_recent">Recent</button>
-                <a href="/" class="btn btn-secondary btn-sm">Current</a>
-                <form id="nextBtn" action="/" method="post" class="d-inline">
-                    <input id="next" type="hidden" name="url">
-                    <input type="submit" value="Next" class="btn btn-outline-dark btn-sm">
-                </form>
+                <button id="curr-btn" class="btn btn-secondary btn-sm">Current</button>
+                <input type="submit" id="next-btn" value="Next" class="btn btn-outline-dark btn-sm">
 
             </div>
         </div>

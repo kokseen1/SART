@@ -6,10 +6,12 @@ var remain_faves_toggle;
 var seconds_arr = [];
 var functions_arr = [];
 
-
+var seasons = ['winter', 'spring', 'summer', 'fall'];
 var faves_toggle = false;
 var last_mode = null;
-
+var curr_year = now.getFullYear();
+const getSeason = d => Math.floor((d.getMonth() / 12 * 4)) % 4
+var curr_season = getSeason(now);
 
 Date.prototype.addDays = function (days) {
     var date = new Date(this.valueOf());
@@ -27,7 +29,9 @@ function retrieve_season(year, season) {
             let image_url = item.image_url;
             let members = item.members;
             let score = item.score;
+            let continuing = item.continuing;
             let title = item.title;
+            if (!score) score = "N/A";
             let url = item.url;
             let start_date = new Date(airing_start);
             let delta_days = ((start_date.getDay() + 7) - now.getDay()) % 7;
@@ -40,7 +44,7 @@ function retrieve_season(year, season) {
             }
             if (start_date > now) next_air_date = start_date;
             let seconds = Math.floor((next_air_date.getTime() - now.getTime()) / 1000);
-            let series_arr = [title, seconds, members, score, image_url, url];
+            let series_arr = [title, seconds, members, score, image_url, url, continuing];
             compiled_series_arr.push(series_arr);
         });
     });
@@ -79,6 +83,7 @@ let score_sort = (a, b) => {
 let sort_func = algo => {
     let listingsArray = get_listings();
     if (listingsArray.length) {
+        if (!algo) algo = score_sort;
         let sortedListings = listingsArray.sort(algo);
         wrapper.innerHTML = "";
         sortedListings.forEach(e => wrapper.appendChild(e));
@@ -176,88 +181,102 @@ if (faves_cookie == null) {
 }
 
 var wrapper = document.getElementById("wrapper");
-$.ajaxSetup({
-    async: false
-});
-let compiled_series_arr = retrieve_season("2021", "fall")
-compiled_series_arr.forEach((e, i) => {
-    listing_div = document.createElement("div");
-    listing_div.classList.add("mt-3");
-    listing_div.classList.add("mb-3");
-    listing_div.classList.add("listing");
-    listing_div.style.borderRadius = "3px";
-    listing_div.setAttribute("data-countdown", e[1]);
-    listing_div.setAttribute("data-popularity", e[2]);
-    listing_div.setAttribute("data-score", e[3]);
-    img_a = document.createElement("a");
-    img_a.href = e[5];
-    thumb_div = document.createElement("div");
-    thumb_div.style.height = "185px";
-    thumb_div.style.width = "140px";
-    thumb = document.createElement("img");
-    thumb.setAttribute("src", e[4]);
-    thumb.style.maxHeight = "100%";
-    thumb.style.width = "100%";
-    thumb.style.position = "relative";
-    thumb.style.top = "50%";
-    thumb.style.transform = "translateY(-50%)";
-    img_a.appendChild(thumb);
-    thumb_div.appendChild(img_a);
-    thumb_div.classList.add("d-inline-block");
-    listing_div.appendChild(thumb_div);
-    title = document.createElement("a");
-    title.innerHTML = e[0];
-    title.style.maxWidth = "calc(100% - 44px)";
-    title.style.textDecoration = "none";
-    title.style.color = "inherit";
-    title.href = e[5];
-    title.classList.add("d-inline-block");
-    title.classList.add("h2");
-    fave = document.createElement("h2");
-    if (faves.includes(e[0])) {
-        fave.innerHTML = "&#10084;";
-    } else {
-        fave.innerHTML = "&#128420;";
+function populate_table(past = false) {
+    $.ajaxSetup({
+        async: false
+    });
+    document.title = `${seasons.at(curr_season % 4).toUpperCase()} ${curr_year}`
+    let compiled_series_arr = retrieve_season(curr_year, seasons.at(curr_season % 4))
+    compiled_series_arr.forEach((e, i) => {
+        listing_div = document.createElement("div");
+        listing_div.classList.add("mt-3");
+        listing_div.classList.add("mb-3");
+        listing_div.classList.add("listing");
+        listing_div.style.borderRadius = "3px";
+        listing_div.setAttribute("data-countdown", e[1]);
+        listing_div.setAttribute("data-popularity", e[2]);
+        listing_div.setAttribute("data-score", e[3]);
+        img_a = document.createElement("a");
+        img_a.href = e[5];
+        thumb_div = document.createElement("div");
+        thumb_div.style.height = "185px";
+        thumb_div.style.width = "140px";
+        thumb = document.createElement("img");
+        thumb.setAttribute("src", e[4]);
+        thumb.style.maxHeight = "100%";
+        thumb.style.width = "100%";
+        thumb.style.position = "relative";
+        thumb.style.top = "50%";
+        thumb.style.transform = "translateY(-50%)";
+        img_a.appendChild(thumb);
+        thumb_div.appendChild(img_a);
+        thumb_div.classList.add("d-inline-block");
+        listing_div.appendChild(thumb_div);
+        title = document.createElement("a");
+        title.innerHTML = e[0];
+        title.style.maxWidth = "calc(100% - 44px)";
+        title.style.textDecoration = "none";
+        title.style.color = "inherit";
+        title.href = e[5];
+        title.classList.add("d-inline-block");
+        title.classList.add("h2");
+        fave = document.createElement("h2");
+        if (faves.includes(e[0])) {
+            fave.innerHTML = "&#10084;";
+        } else {
+            fave.innerHTML = "&#128420;";
+        }
+        fave.classList.add("fave");
+        fave.classList.add("d-inline-block");
+        fave.style.float = "right";
+        headdiv = document.createElement("div");
+        headdiv.appendChild(title);
+        headdiv.appendChild(fave);
+        text_block_div = document.createElement("div");
+        text_block_div.classList.add("d-inline-block");
+        text_block_div.style.verticalAlign = "middle";
+        text_block_div.style.paddingLeft = "20px";
+        text_block_div.style.width = "calc(100% - 160px)";
+        text_block_div.appendChild(headdiv);
+        span1 = document.createElement("span");
+        span1.classList.add("lead");
+        span1.innerHTML = "&#128293 " + e[2] + " ";
+        span2 = document.createElement("span");
+        span2.classList.add("lead");
+        span2.innerHTML = "&#11088 " + e[3] + "<br>";
+        span3 = document.createElement("span");
+        span3.classList.add("lead");
+        span3.innerHTML = "00 Days 00 Hours 00 Minutes 00 Seconds";
+        span3.setAttribute("id", i);
+        text_block_div.appendChild(span1);
+        text_block_div.appendChild(span2);
+        text_block_div.appendChild(span3);
+        listing_div.appendChild(text_block_div);
+        listing_div.style.width = "100%";
+        listing_div.style.margin = "0 auto";
+        listing_div.style.overflow = "hidden";
+        wrapper.appendChild(listing_div);
+        seconds_arr.push(e[1]);
+        if (!e[6] && past) {
+            console.log(e[1])
+            listing_div.setAttribute("data-countdown", 10 ** 10);
+            span3.innerHTML = "Finished Airing";
+            return;
+        }
+        var countdownTimer = setInterval(() => {
+            timer(i);
+        }, 1000);
+        functions_arr.push(countdownTimer);
+    });
+    if (remain_faves_toggle) {
+        toggle_faves();
     }
-    fave.classList.add("fave");
-    fave.classList.add("d-inline-block");
-    fave.style.float = "right";
-    headdiv = document.createElement("div");
-    headdiv.appendChild(title);
-    headdiv.appendChild(fave);
-    text_block_div = document.createElement("div");
-    text_block_div.classList.add("d-inline-block");
-    text_block_div.style.verticalAlign = "middle";
-    text_block_div.style.paddingLeft = "20px";
-    text_block_div.style.width = "calc(100% - 160px)";
-    text_block_div.appendChild(headdiv);
-    span1 = document.createElement("span");
-    span1.classList.add("lead");
-    span1.innerHTML = "&#128293 " + e[2] + " ";
-    span2 = document.createElement("span");
-    span2.classList.add("lead");
-    span2.innerHTML = "&#11088 " + e[3] + "<br>";
-    span3 = document.createElement("span");
-    span3.classList.add("lead");
-    span3.innerHTML = "00 Days 00 Hours 00 Minutes 00 Seconds";
-    span3.setAttribute("id", i);
-    text_block_div.appendChild(span1);
-    text_block_div.appendChild(span2);
-    text_block_div.appendChild(span3);
-    listing_div.appendChild(text_block_div);
-    listing_div.style.width = "100%";
-    listing_div.style.margin = "0 auto";
-    listing_div.style.overflow = "hidden";
-    wrapper.appendChild(listing_div);
-    seconds_arr.push(e[1]);
-    var countdownTimer = setInterval(() => {
-        timer(i);
-    }, 1000);
-    functions_arr.push(countdownTimer);
-});
-$.ajaxSetup({
-    async: true
-});
+    sort_func(last_mode);
+    $.ajaxSetup({
+        async: true
+    });
+}
+populate_table();
 
 
 let fave_toggle_cookie = $.cookie("faves_toggle");
@@ -265,11 +284,40 @@ if (fave_toggle_cookie == null) {
     $.cookie("faves_toggle", "false", { expires: 9999 });
 }
 remain_faves_toggle = ($.cookie("faves_toggle") === "true");
-sort_func(soonest_sort); // default sort when first loading page
-if (remain_faves_toggle) {
-    toggle_faves();
+sort_func(score_sort); // default sort when first loading page
+
+
+function reset_page() {
+    $("#wrapper").empty();
+    functions_arr.forEach(element => {
+        clearInterval(element);
+    });
 }
-$(".fave").on("click", event => {
+
+$("#next-btn").on("click", function () {
+    reset_page()
+    curr_season += 1;
+    if (curr_season % 3 == 1) curr_year += 1;
+    populate_table();
+})
+
+$("#prev-btn").on("click", function () {
+    reset_page()
+    curr_season -= 1;
+    if (curr_season % 4 == -1) curr_year -= 1;
+    populate_table(true);
+})
+
+$("#curr-btn").on("click", function () {
+    reset_page()
+    curr_season = getSeason(now);
+    curr_year = now.getFullYear();
+    populate_table();
+})
+
+
+$(document).on("click", ".fave", event => {
+    console.log("sad")
     var fave = $(event.target).prev().html();
     var heart = $(event.target);
     if (faves.includes(fave)) {
