@@ -173,6 +173,13 @@ function timer(element_id) {
 // prev.value = prev_season_url;
 // next.value = next_season_url;
 
+let fave_toggle_cookie = $.cookie("faves_toggle");
+if (fave_toggle_cookie == null) {
+    $.cookie("faves_toggle", "false", { expires: 9999 });
+}
+remain_faves_toggle = ($.cookie("faves_toggle") === "true");
+// sort_func(score_sort); // default sort when first loading page
+
 let faves_cookie = $.cookie("faves");
 if (faves_cookie == null) {
     $.cookie("faves", JSON.stringify(faves), { expires: 9999 });
@@ -258,7 +265,6 @@ function populate_table(past = false) {
         wrapper.appendChild(listing_div);
         seconds_arr.push(e[1]);
         if (!e[6] && past) {
-            console.log(e[1])
             listing_div.setAttribute("data-countdown", 10 ** 10);
             span3.innerHTML = "Finished Airing";
             return;
@@ -268,23 +274,16 @@ function populate_table(past = false) {
         }, 1000);
         functions_arr.push(countdownTimer);
     });
-    if (remain_faves_toggle) {
-        toggle_faves();
-    }
+
     sort_func(last_mode);
     $.ajaxSetup({
         async: true
     });
 }
 populate_table();
-
-
-let fave_toggle_cookie = $.cookie("faves_toggle");
-if (fave_toggle_cookie == null) {
-    $.cookie("faves_toggle", "false", { expires: 9999 });
+if (remain_faves_toggle) {
+    toggle_faves();
 }
-remain_faves_toggle = ($.cookie("faves_toggle") === "true");
-sort_func(score_sort); // default sort when first loading page
 
 
 function reset_page() {
@@ -299,6 +298,9 @@ $("#next-btn").on("click", function () {
     curr_season += 1;
     if (curr_season % 3 == 1) curr_year += 1;
     populate_table();
+    if (remain_faves_toggle) {
+        toggle_faves();
+    }
 })
 
 $("#prev-btn").on("click", function () {
@@ -306,6 +308,9 @@ $("#prev-btn").on("click", function () {
     curr_season -= 1;
     if (curr_season % 4 == -1) curr_year -= 1;
     populate_table(true);
+    if (remain_faves_toggle) {
+        toggle_faves();
+    }
 })
 
 $("#curr-btn").on("click", function () {
@@ -313,11 +318,13 @@ $("#curr-btn").on("click", function () {
     curr_season = getSeason(now);
     curr_year = now.getFullYear();
     populate_table();
+    if (remain_faves_toggle) {
+        toggle_faves();
+    }
 })
 
 
 $(document).on("click", ".fave", event => {
-    console.log("sad")
     var fave = $(event.target).prev().html();
     var heart = $(event.target);
     if (faves.includes(fave)) {
