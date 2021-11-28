@@ -177,7 +177,6 @@ let fave_toggle_cookie = $.cookie("faves_toggle");
 if (fave_toggle_cookie == null) {
     $.cookie("faves_toggle", "false", { expires: 9999 });
 }
-remain_faves_toggle = ($.cookie("faves_toggle") === "true");
 // sort_func(score_sort); // default sort when first loading page
 
 let faves_cookie = $.cookie("faves");
@@ -281,6 +280,7 @@ function populate_table(past = false) {
     });
 }
 populate_table();
+remain_faves_toggle = ($.cookie("faves_toggle") === "true");
 if (remain_faves_toggle) {
     toggle_faves();
 }
@@ -298,9 +298,8 @@ $("#next-btn").on("click", function () {
     curr_season += 1;
     if (curr_season % 3 == 1) curr_year += 1;
     populate_table();
-    if (remain_faves_toggle) {
-        toggle_faves();
-    }
+    remain_faves_toggle = ($.cookie("faves_toggle") === "true");
+   
 })
 
 $("#prev-btn").on("click", function () {
@@ -308,9 +307,8 @@ $("#prev-btn").on("click", function () {
     curr_season -= 1;
     if (curr_season % 4 == -1) curr_year -= 1;
     populate_table(true);
-    if (remain_faves_toggle) {
-        toggle_faves();
-    }
+    remain_faves_toggle = ($.cookie("faves_toggle") === "true");
+   
 })
 
 $("#curr-btn").on("click", function () {
@@ -318,9 +316,7 @@ $("#curr-btn").on("click", function () {
     curr_season = getSeason(now);
     curr_year = now.getFullYear();
     populate_table();
-    if (remain_faves_toggle) {
-        toggle_faves();
-    }
+    remain_faves_toggle = ($.cookie("faves_toggle") === "true");
 })
 
 
