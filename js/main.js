@@ -1,6 +1,16 @@
 const DOMAIN = "https://api.jikan.moe/v3/season";
 const now = new Date();
 
+let faves = [];
+var remain_faves_toggle;
+var seconds_arr = [];
+var functions_arr = [];
+
+
+var faves_toggle = false;
+var last_mode = null;
+
+
 Date.prototype.addDays = function (days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
@@ -19,8 +29,6 @@ function retrieve_season(year, season) {
             let score = item.score;
             let title = item.title;
             let url = item.url;
-            console.log(title);
-            console.log(airing_start);
             let start_date = new Date(airing_start);
             let delta_days = ((start_date.getDay() + 7) - now.getDay()) % 7;
             let next_air_date = now.addDays(delta_days);
@@ -30,8 +38,6 @@ function retrieve_season(year, season) {
             if (next_air_date < now) {
                 next_air_date = next_air_date.addDays(7);
             }
-            console.log(next_air_date);
-            console.log(next_air_date.getTime() - now.getTime());
             if (start_date > now) next_air_date = start_date;
             let seconds = Math.floor((next_air_date.getTime() - now.getTime()) / 1000);
             let series_arr = [title, seconds, members, score, image_url, url];
@@ -39,20 +45,6 @@ function retrieve_season(year, season) {
         });
     });
     return compiled_series_arr;
-};
-
-
-let sort_func = algo => {
-    let listingsArray = get_listings();
-    if (listingsArray.length) {
-        let sortedListings = listingsArray.sort(algo);
-        wrapper.innerHTML = "";
-        sortedListings.forEach(e => wrapper.appendChild(e));
-    }
-    if (faves_toggle == true) {
-        sort_faves_func();
-    }
-    last_mode = algo;
 };
 
 let get_listings = () => {
@@ -83,6 +75,20 @@ let score_sort = (a, b) => {
         return b.dataset.score - a.dataset.score;
     }
 };
+
+let sort_func = algo => {
+    let listingsArray = get_listings();
+    if (listingsArray.length) {
+        let sortedListings = listingsArray.sort(algo);
+        wrapper.innerHTML = "";
+        sortedListings.forEach(e => wrapper.appendChild(e));
+    }
+    if (faves_toggle == true) {
+        sort_faves_func();
+    }
+    last_mode = algo;
+};
+
 
 
 let toggle_faves = () => {
@@ -132,10 +138,6 @@ let sort_toggle_func = () => {
 };
 
 
-let faves = [];
-var remain_faves_toggle;
-var seconds_arr = [];
-var functions_arr = [];
 function timer(element_id) {
     seconds = seconds_arr[element_id];
     var days = Math.floor(seconds / 24 / 60 / 60);
@@ -352,9 +354,6 @@ function hideSearch() {
         real_box.style.display = "none";
     }
 }
-
-var faves_toggle = false;
-var last_mode = null;
 
 $(document).ready(function () {
     document.getElementById("sort_soonest").onclick = () => {
