@@ -1,4 +1,5 @@
 const DOMAIN = "https://api.jikan.moe/v3/season";
+const WATCH_DOMAIN = "https://gogoanime.wiki//search.html?keyword=";
 const now = new Date();
 
 let faves = [];
@@ -249,13 +250,18 @@ function populate_table(past = false) {
         span1.innerHTML = "&#128293 " + e[2] + " ";
         span2 = document.createElement("span");
         span2.classList.add("lead");
-        span2.innerHTML = "&#11088 " + e[3] + "<br>";
+        span2.innerHTML = "&#11088 " + e[3] + " ";
         span3 = document.createElement("span");
         span3.classList.add("lead");
         span3.innerHTML = "00 Days 00 Hours 00 Minutes 00 Seconds";
         span3.setAttribute("id", i);
         text_block_div.appendChild(span1);
         text_block_div.appendChild(span2);
+        watch_btn = document.createElement("a");
+        watch_btn.href = WATCH_DOMAIN + e[0];
+        watch_btn.target = "_blank";
+        watch_btn.innerHTML = `<img style="height:20px;padding-bottom:5px;" src="https://gogoanime.wiki/img/icon/logo.png"><br>`;
+        text_block_div.appendChild(watch_btn);
         text_block_div.appendChild(span3);
         listing_div.appendChild(text_block_div);
         listing_div.style.width = "100%";
@@ -297,9 +303,9 @@ $("#next-btn").on("click", function () {
     reset_page()
     curr_season += 1;
     if (curr_season % 3 == 1) curr_year += 1;
+    console.log(curr_season % 3)
     populate_table();
-    remain_faves_toggle = ($.cookie("faves_toggle") === "true");
-   
+
 })
 
 $("#prev-btn").on("click", function () {
@@ -307,8 +313,7 @@ $("#prev-btn").on("click", function () {
     curr_season -= 1;
     if (curr_season % 4 == -1) curr_year -= 1;
     populate_table(true);
-    remain_faves_toggle = ($.cookie("faves_toggle") === "true");
-   
+
 })
 
 $("#curr-btn").on("click", function () {
@@ -316,7 +321,6 @@ $("#curr-btn").on("click", function () {
     curr_season = getSeason(now);
     curr_year = now.getFullYear();
     populate_table();
-    remain_faves_toggle = ($.cookie("faves_toggle") === "true");
 })
 
 

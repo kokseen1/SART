@@ -85,6 +85,7 @@
             return response.json();
         })
             .then(function (body) {
+                console.log(body)
                 current_season = body.pop();
                 document.title = current_season;
                 prev_season_url = body.pop();
