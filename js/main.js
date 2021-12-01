@@ -178,6 +178,7 @@ function populate_table(past = false) {
     $.ajaxSetup({
         async: false
     });
+    $(".loader").show()
     document.title = `${get_season_text().toUpperCase()} ${curr_year}`
     let compiled_series_arr = retrieve_season(curr_year, get_season_text())
     compiled_series_arr.forEach((e, i) => {
@@ -241,6 +242,7 @@ function populate_table(past = false) {
         functions_arr.push(countdownTimer);
     });
     sort_func();
+    $(".loader").hide()
     $.ajaxSetup({
         async: true
     });
