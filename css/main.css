@@ -13,6 +13,7 @@
     margin-top: 10px;
     margin-bottom: 10px;
     border-radius: 10px;
+    position: relative;
 }
 
 .listing:hover {
@@ -21,8 +22,10 @@
 
 .fave {
     cursor: pointer;
-    float: right;
     font-size: x-large;
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
 
 .thumb-div {
