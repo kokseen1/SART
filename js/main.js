@@ -75,6 +75,7 @@ function retrieve_season(year, season) {
     let compiled_series_arr = [];
     $.getJSON(season_url, function (data) {
         $.each(data.anime, function (i, item) {
+            if (item.r18) return;
             let airing_start = item.airing_start;
             let image_url = item.image_url;
             let members = item.members;

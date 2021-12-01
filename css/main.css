@@ -40,11 +40,13 @@
 }
 
 .loader {
-    width: 14%;
-    height: 14%;
+    width: 12%;
+    height: 12%;
     animation: spin 1s linear infinite;
     display: block;
-    margin: 0 auto;
+    margin-top: 12%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .title {
