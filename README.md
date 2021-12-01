@@ -1,3 +1,3 @@
-# SART
+# Sartre
  
-Seasonal Anime Release Tracker
+Seasonal Anime Release Tracker Remake
