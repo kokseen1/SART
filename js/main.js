@@ -178,7 +178,6 @@ function populate_table(past = false) {
     $.ajaxSetup({
         async: false
     });
-    $(".loader").show()
     document.title = `${get_season_text().toUpperCase()} ${curr_year}`
     let compiled_series_arr = retrieve_season(curr_year, get_season_text())
     compiled_series_arr.forEach((e, i) => {
@@ -251,6 +250,7 @@ function populate_table(past = false) {
 populate_table();
 
 function reset_page() {
+    $(".loader").show()
     $("#wrapper").empty();
     functions_arr.forEach(element => {
         clearInterval(element);
