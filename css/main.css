@@ -10,6 +10,9 @@
 
 .listing {
     box-shadow: 1px 1px 0px grey;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
 }
 
 .listing:hover {
@@ -18,12 +21,45 @@
 
 .fave {
     cursor: pointer;
+    float: right;
+    font-size: x-large;
+}
+
+.thumb-div {
+    display: inline-block;
+    height: 185px;
+    width: 140px;
+}
+
+.thumb {
+    max-height: 100%;
+    width: 100%;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .loader {
     width: 14%;
     height: 14%;
     animation: spin 1s linear infinite;
+    display: block;
+    margin: 0 auto;
+}
+
+.title {
+    max-width: calc(100%-44px);
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    font-size: x-large;
+}
+
+.text-block-div {
+    vertical-align: middle;
+    padding-left: 20px;
+    width: calc(100% - 160px);
+    display: inline-block;
 }
 
 @keyframes spin {
@@ -34,4 +70,8 @@
     100% {
         transform: rotate(360deg);
     }
+}
+
+#navbar-div {
+    margin: auto;
 }
