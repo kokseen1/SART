@@ -68,7 +68,7 @@ let score_sort = (a, b) => {
     }
 };
 
-let last_mode = soonest_sort;
+let last_mode = score_sort;
 
 function retrieve_season(year, season) {
     let season_url = `${DOMAIN}/${year}/${season}`;
