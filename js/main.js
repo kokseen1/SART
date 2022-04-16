@@ -109,7 +109,8 @@ function retrieve_season(year, season, page) {
             let today_weekday_int = now.getDay() - 1 // Monday is 0
             let days_until_broadcast = (broadcast_weekday_int - today_weekday_int) % 7;
             let broadcast_date = new Date(new Date(Date().slice(0, 16) + day_time_array[2]).getTime() + (days_until_broadcast * 24 * 60 * 60 * 1000 - 1 * 60 * 60 * 1000));
-            if (Date.parse(Date()) > Date.parse(broadcast_date)) {
+            if (broadcast_day_time == "Unknown") broadcast_date = new Date(item.aired.from);
+            while (Date.parse(Date()) > Date.parse(broadcast_date)) {
                 broadcast_date.setTime(broadcast_date.getTime() + (7 * 24 * 60 * 60 * 1000)); // Add 7 days if it already aired today
             }
             if (item.status == "Not yet aired") broadcast_date = new Date(item.aired.from);
@@ -268,8 +269,7 @@ function populate_table(lastidx = 0, page = 1) {
             functions_arr.push(countdownTimer);
         }
     });
-    console.log(next_page);
-    if (next_page != -1) populate_table(compiled_series_arr.length, next_page);
+    if (next_page != -1) populate_table(lastidx+compiled_series_arr.length, next_page);
     // if (compiled_series_arr.length == 0) {
     //     alert("No more data!");
     // }
