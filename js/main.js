@@ -90,11 +90,6 @@ let last_mode = score_sort;
 function retrieve_season(year, season) {
     let season_url = `${DOMAIN}/${year}/${season}`;
     let compiled_series_arr = [];
-    functions_arr = [];
-    seconds_arr = [];
-    // Awful hack
-    for (var i = 1; i < 99999; i++)
-        window.clearInterval(i);
     $.getJSON(season_url, function (data) {
         $.each(data.data, function (i, item) {
             if (item.r18) return;
@@ -115,7 +110,7 @@ function retrieve_season(year, season) {
             if (Date.parse(Date()) > Date.parse(broadcast_date)) {
                 broadcast_date.setTime(broadcast_date.getTime() + (7 * 24 * 60 * 60 * 1000)); // Add 7 days if it already aired today
             }
-            if (broadcast_day_time == "Unknown") broadcast_date = new Date(item.aired.from);
+            if (item.status == "Not yet aired") broadcast_date = new Date(item.aired.from);
             // let start_date = new Date(airing_start);
             // let delta_days = ((start_date.getDay() + 7) - now.getDay()) % 7;
             // let next_air_date = now.addDays(delta_days);
@@ -127,6 +122,7 @@ function retrieve_season(year, season) {
             // }
             // if (start_date > now) next_air_date = start_date;
             let seconds = Math.floor((broadcast_date.getTime() - now.getTime()) / 1000);
+            if (item.status == "Finished Airing") seconds = -1;
             let series_arr = [title, seconds, members, score, image_url, url, continuing];
             compiled_series_arr.push(series_arr);
         });
@@ -206,7 +202,7 @@ function timer(element_id) {
 
 
 
-function populate_table(past = false) {
+function populate_table() {
     $.ajaxSetup({
         async: false
     });
@@ -263,7 +259,7 @@ function populate_table(past = false) {
         listing_div.appendChild(text_block_div);
         wrapper.appendChild(listing_div);
         seconds_arr.push(e[1]);
-        if (past) {
+        if (e[1] == -1) {
             listing_div.setAttribute("data-countdown", 10 ** 10);
             span3.innerHTML = "";
             return;
@@ -292,6 +288,7 @@ function reset_page() {
         clearInterval(element);
     });
     functions_arr = [];
+    seconds_arr = [];
 }
 
 $("#next-btn").on("click", function () {
