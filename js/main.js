@@ -259,7 +259,6 @@ function populate_table(lastidx = 0, page = 1) {
         wrapper.appendChild(listing_div);
         seconds_arr.push(e[1]);
         if (e[1] == -1) {
-            console.log(title)
             // listing_div.setAttribute("data-countdown", 10 ** 10);
             span3.innerHTML = "";
         } else {
