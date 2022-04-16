@@ -87,10 +87,12 @@ function getTimeRemaining(endtime) {
 
 let last_mode = score_sort;
 
-function retrieve_season(year, season) {
-    let season_url = `${DOMAIN}/${year}/${season}`;
+function retrieve_season(year, season, page) {
+    let season_url = `${DOMAIN}/${year}/${season}?page=${page}`;
     let compiled_series_arr = [];
     $.getJSON(season_url, function (data) {
+        if (data.pagination.has_next_page) page += 1;
+        else page = -1;
         $.each(data.data, function (i, item) {
             if (item.r18) return;
             // let airing_start = item.airing_start;
@@ -127,7 +129,7 @@ function retrieve_season(year, season) {
             compiled_series_arr.push(series_arr);
         });
     });
-    return compiled_series_arr;
+    return [page, compiled_series_arr];
 };
 
 
@@ -202,13 +204,9 @@ function timer(element_id) {
 
 
 
-function populate_table() {
-    $.ajaxSetup({
-        async: false
-    });
+function populate_table(lastidx = 0, page = 1) {
     document.title = `${get_season_text().toUpperCase()} ${curr_year}`
-    let compiled_series_arr = retrieve_season(curr_year, get_season_text())
-
+    let [next_page, compiled_series_arr] = retrieve_season(curr_year, get_season_text(), page);
     compiled_series_arr.forEach((e, i) => {
         listing_div = document.createElement("div");
         listing_div.classList.add("listing");
@@ -247,7 +245,7 @@ function populate_table() {
         span3 = document.createElement("span");
         span3.classList.add("lead");
         span3.innerHTML = "00 Days 00 Hours 00 Minutes 00 Seconds";
-        span3.setAttribute("id", i);
+        span3.setAttribute("id", lastidx + i);
         text_block_div.appendChild(span1);
         text_block_div.appendChild(span2);
         watch_btn = document.createElement("a");
@@ -260,33 +258,39 @@ function populate_table() {
         wrapper.appendChild(listing_div);
         seconds_arr.push(e[1]);
         if (e[1] == -1) {
-            listing_div.setAttribute("data-countdown", 10 ** 10);
+            console.log(title)
+            // listing_div.setAttribute("data-countdown", 10 ** 10);
             span3.innerHTML = "";
-            return;
+        } else {
+            let countdownTimer = setInterval(() => {
+                timer(lastidx + i);
+            }, 1000);
+            functions_arr.push(countdownTimer);
         }
-        let countdownTimer = setInterval(() => {
-            timer(i);
-        }, 1000);
-        functions_arr.push(countdownTimer);
     });
-    sort_func();
+    console.log(next_page);
+    if (next_page != -1) populate_table(compiled_series_arr.length, next_page);
+    // if (compiled_series_arr.length == 0) {
+    //     alert("No more data!");
+    // }
     $(".loader").hide()
-    $.ajaxSetup({
-        async: true
-    });
-    if (compiled_series_arr.length == 0) {
-        alert("No more data!");
-    }
+    sort_func();
 }
 
+$.ajaxSetup({
+    async: false
+});
 populate_table();
 
+
 function reset_page() {
-    $(".loader").show()
+    // $(".loader").show()
     $("#wrapper").empty();
-    functions_arr.forEach(element => {
-        clearInterval(element);
-    });
+    // functions_arr.forEach(element => {
+    // clearInterval(element);
+    // });
+    for (var i = 1; i < 99999; i++)
+        window.clearInterval(i);
     functions_arr = [];
     seconds_arr = [];
 }
@@ -296,13 +300,17 @@ $("#next-btn").on("click", function () {
     curr_season += 1;
     if (get_season_text() == "winter") curr_year += 1;
     populate_table();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
 })
 
 $("#prev-btn").on("click", function () {
     reset_page()
     curr_season -= 1;
     if (get_season_text() == "fall") curr_year -= 1;
-    populate_table(true);
+    populate_table();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
 })
 
 $("#curr-btn").on("click", function () {
@@ -310,6 +318,8 @@ $("#curr-btn").on("click", function () {
     curr_season = getSeason(now);
     curr_year = now.getFullYear();
     populate_table();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
 })
 
 
