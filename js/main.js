@@ -1,6 +1,7 @@
-const DOMAIN = "https://api.jikan.moe/v3/season";
+const DOMAIN = "https://api.jikan.moe/v4/seasons";
 const WATCH_DOMAIN = "https://gogoanime.wiki//search.html?keyword=";
 const seasons = ["winter", "spring", "summer", "fall"];
+const weekdays_array = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const getSeason = d => Math.floor((d.getMonth() / 12 * 4)) % 4;
 const now = new Date();
 
@@ -68,33 +69,64 @@ let score_sort = (a, b) => {
     }
 };
 
+function getTimeRemaining(endtime) {
+    const total = Date.parse(endtime) - Date.parse(new Date());
+    const seconds = Math.floor((total / 1000) % 60);
+    const minutes = Math.floor((total / 1000 / 60) % 60);
+    const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+    const days = Math.floor(total / (1000 * 60 * 60 * 24));
+    return {
+        total,
+        days,
+        hours,
+        minutes,
+        seconds
+    };
+}
+
+
 let last_mode = score_sort;
 
 function retrieve_season(year, season) {
     let season_url = `${DOMAIN}/${year}/${season}`;
     let compiled_series_arr = [];
+    functions_arr = [];
+    seconds_arr = [];
+    // Awful hack
+    for (var i = 1; i < 99999; i++)
+        window.clearInterval(i);
     $.getJSON(season_url, function (data) {
-        $.each(data.anime, function (i, item) {
+        $.each(data.data, function (i, item) {
             if (item.r18) return;
-            let airing_start = item.airing_start;
-            let image_url = item.image_url;
+            // let airing_start = item.airing_start;
+            let image_url = item.images.jpg.image_url;
             let members = item.members;
             let score = item.score;
             let continuing = item.continuing;
             let title = item.title;
             if (!score) score = "N/A";
             let url = item.url;
-            let start_date = new Date(airing_start);
-            let delta_days = ((start_date.getDay() + 7) - now.getDay()) % 7;
-            let next_air_date = now.addDays(delta_days);
-            next_air_date.setHours(start_date.getHours());
-            next_air_date.setMinutes(start_date.getMinutes());
-            next_air_date.setSeconds(start_date.getSeconds());
-            if (next_air_date < now) {
-                next_air_date = next_air_date.addDays(7);
+            let broadcast_day_time = item.broadcast.string;
+            let day_time_array = broadcast_day_time.split(" ");
+            let broadcast_weekday_int = weekdays_array.indexOf(day_time_array[0].slice(0, 3));
+            let today_weekday_int = now.getDay() - 1 // Monday is 0
+            let days_until_broadcast = (broadcast_weekday_int - today_weekday_int) % 7;
+            let broadcast_date = new Date(new Date(Date().slice(0, 16) + day_time_array[2]).getTime() + (days_until_broadcast * 24 * 60 * 60 * 1000 - 1 * 60 * 60 * 1000));
+            if (Date.parse(Date()) > Date.parse(broadcast_date)) {
+                broadcast_date.setTime(broadcast_date.getTime() + (7 * 24 * 60 * 60 * 1000)); // Add 7 days if it already aired today
             }
-            if (start_date > now) next_air_date = start_date;
-            let seconds = Math.floor((next_air_date.getTime() - now.getTime()) / 1000);
+            if (broadcast_day_time == "Unknown") broadcast_date = new Date(item.aired.from);
+            // let start_date = new Date(airing_start);
+            // let delta_days = ((start_date.getDay() + 7) - now.getDay()) % 7;
+            // let next_air_date = now.addDays(delta_days);
+            // next_air_date.setHours(start_date.getHours());
+            // next_air_date.setMinutes(start_date.getMinutes());
+            // next_air_date.setSeconds(start_date.getSeconds());
+            // if (next_air_date < now) {
+            //     next_air_date = next_air_date.addDays(7);
+            // }
+            // if (start_date > now) next_air_date = start_date;
+            let seconds = Math.floor((broadcast_date.getTime() - now.getTime()) / 1000);
             let series_arr = [title, seconds, members, score, image_url, url, continuing];
             compiled_series_arr.push(series_arr);
         });
@@ -180,6 +212,7 @@ function populate_table(past = false) {
     });
     document.title = `${get_season_text().toUpperCase()} ${curr_year}`
     let compiled_series_arr = retrieve_season(curr_year, get_season_text())
+
     compiled_series_arr.forEach((e, i) => {
         listing_div = document.createElement("div");
         listing_div.classList.add("listing");
@@ -245,6 +278,9 @@ function populate_table(past = false) {
     $.ajaxSetup({
         async: true
     });
+    if (compiled_series_arr.length == 0) {
+        alert("No more data!");
+    }
 }
 
 populate_table();
