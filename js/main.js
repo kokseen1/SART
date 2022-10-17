@@ -1,5 +1,6 @@
 const DOMAIN = "https://api.jikan.moe/v4/seasons";
 const WATCH_DOMAIN = "https://gogoanime.gg//search.html?keyword=";
+const WATCH_DOMAIN2 = "https://9anime.vc/search?keyword=";
 const seasons = ["winter", "spring", "summer", "fall"];
 const weekdays_array = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const getSeason = d => Math.floor((d.getMonth() / 12 * 4)) % 4;
@@ -253,7 +254,12 @@ function populate_table(lastidx = 0, page = 1) {
         watch_btn.href = WATCH_DOMAIN + e[0];
         watch_btn.target = "_blank";
         watch_btn.innerHTML = `<img style="height:20px;padding-bottom:5px;" src="https://gogoanime.wiki/img/icon/logo.png"><br>`;
+        watch_btn2 = document.createElement("a");
+        watch_btn2.href = WATCH_DOMAIN2 + e[0];
+        watch_btn2.target = "_blank";
+        watch_btn2.innerHTML = `<img style="height:20px;padding-bottom:5px;" src="https://9anime.vc/images/logo.png"><br>`;
         text_block_div.appendChild(watch_btn);
+        text_block_div.appendChild(watch_btn2);
         text_block_div.appendChild(span3);
         listing_div.appendChild(text_block_div);
         wrapper.appendChild(listing_div);
