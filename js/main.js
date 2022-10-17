@@ -253,7 +253,7 @@ function populate_table(lastidx = 0, page = 1) {
         watch_btn = document.createElement("a");
         watch_btn.href = WATCH_DOMAIN + e[0];
         watch_btn.target = "_blank";
-        watch_btn.innerHTML = `<img style="height:20px;padding-bottom:5px;" src="https://gogoanime.wiki/img/icon/logo.png"><br>`;
+        watch_btn.innerHTML = `<img style="height:20px;padding-bottom:5px;display:inline-block;" src="https://gogoanime.wiki/img/icon/logo.png"><br>`;
         watch_btn2 = document.createElement("a");
         watch_btn2.href = WATCH_DOMAIN2 + e[0];
         watch_btn2.target = "_blank";
