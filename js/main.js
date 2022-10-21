@@ -1,5 +1,5 @@
 const DOMAIN = "https://api.jikan.moe/v4/seasons";
-const WATCH_DOMAIN = "https://gogoanime.gg//search.html?keyword=";
+const WATCH_DOMAIN = "https://gogoanime.gg/search.html?keyword=";
 const WATCH_DOMAIN2 = "https://9anime.to/filter?keyword=";
 const seasons = ["winter", "spring", "summer", "fall"];
 const weekdays_array = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
